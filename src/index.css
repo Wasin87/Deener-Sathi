@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #C8A951;
+  --color-secondary: #3B2A1A;
+  --color-islamic-bg: #3B2A1A;
+  --color-dark-bg: #3B2A1A;
+  --color-dark-card: #251D16;
+  
+  --font-sans: "Poppins", "Hind Siliguri", sans-serif;
+  --font-arabic: "Amiri", serif;
+  --font-bangla: "Hind Siliguri", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-primary transition-colors duration-300 font-sans;
+    background-image: 
+      linear-gradient(to bottom, #3B2A1A, #1A120A),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0l4 12 12 4-12 4-4 12-4-12-12-4 12-4 4-12z' fill='%23C8A951' fill-opacity='0.03'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+  }
+}
+
+.glass {
+  @apply bg-dark-card/60 backdrop-blur-xl border border-primary/20 shadow-[0_8px_30px_rgb(200,169,81,0.1)] transition-all duration-300;
+}
+
+.glass-dark {
+  @apply bg-dark-bg/90 backdrop-blur-xl border border-primary/20 shadow-2xl;
+}
+
+.islamic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l2.5 7.5L40 10l-7.5 2.5L30 20l-2.5-7.5L20 10l7.5-2.5L30 0zm0 40l2.5 7.5L40 50l-7.5 2.5L30 60l-2.5-7.5L20 50l7.5-2.5L30 40zM0 30l7.5 2.5L10 40l2.5-7.5L20 30l-7.5-2.5L10 20l-2.5 7.5L0 30zm40 0l7.5 2.5L50 40l2.5-7.5L60 30l-7.5-2.5L50 20l-2.5 7.5L40 30z' fill='%23C8A951' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-white;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Deener Sathi",
+  "description": "Accurate prayer times, Quran recitation, Islamic information and daily Namaz guide with Deener Sathi voice assistant.",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone"
+  ]
+}
