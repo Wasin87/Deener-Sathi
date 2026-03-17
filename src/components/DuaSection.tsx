@@ -378,7 +378,7 @@ export const DuaSection: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98 }}
-                className="group overflow-hidden rounded-[24px] border border-primary/10 bg-[#1a1410] dark:bg-[#1a1410] transition-all hover:border-primary/30"
+                className="islamic-card rounded-[24px] group overflow-hidden"
               >
                 {/* Header */}
                 <div 

@@ -103,7 +103,7 @@ export const Settings: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="glass p-8 rounded-[32px]"
+              className="islamic-card p-8"
             >
               <h3 className="text-xs font-bold text-primary uppercase tracking-widest mb-6">{group.title}</h3>
               <div className="space-y-6">
@@ -126,7 +126,7 @@ export const Settings: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass p-8 rounded-[32px] flex items-center justify-between group cursor-pointer"
+            className="islamic-card p-8 flex items-center justify-between group cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">

@@ -254,7 +254,7 @@ export const QuranSection: React.FC = () => {
                   <button
                     key={i}
                     onClick={() => handleParaClick(i + 1)}
-                    className="glass p-6 rounded-3xl hover:bg-primary hover:text-white transition-all group text-center border border-primary/10"
+                    className="islamic-card p-6 group text-center"
                   >
                     <div className="w-12 h-12 bg-primary/10 group-hover:bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
                       <span className="font-bold text-primary group-hover:text-white">{i + 1}</span>
@@ -275,7 +275,7 @@ export const QuranSection: React.FC = () => {
                   <button
                     key={surah.number}
                     onClick={() => handleSurahClick(surah.number)}
-                    className="glass p-6 rounded-3xl flex items-center justify-between hover:border-primary/50 transition-all border border-primary/5"
+                    className="islamic-card p-6 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center font-bold text-lg">
@@ -352,7 +352,7 @@ export const QuranSection: React.FC = () => {
                       transition={{ delay: idx * 0.05 }}
                       key={ayah.number} 
                       id={`ayah-${ayah.numberInSurah}`}
-                      className="group relative bg-dark-card/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 rounded-[32px] p-8 transition-all duration-300 shadow-lg shadow-black/20"
+                      className="islamic-card p-8 group relative transition-all duration-300"
                     >
                       <div className="flex flex-col gap-8">
                         <div className="flex justify-between items-start gap-6">

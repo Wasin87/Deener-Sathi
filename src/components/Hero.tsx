@@ -1,35 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, MapPin, Calendar, Bell, ChevronDown } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { format, differenceInSeconds, parse, addDays, isBefore } from 'date-fns';
 import { PrayerData } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
 import { locations } from '../utils/locations';
 
+import { useRealTimeDates, toBnDigits } from '../hooks/useRealTimeDates';
+
 interface HeroProps {
   prayerData: PrayerData | null;
   division: string;
-  setDivision: (div: string) => void;
   district: string;
-  setDistrict: (dist: string) => void;
+  onLocationChange: (div: string, dist: string) => void;
+  prayerLoading: boolean;
   setActiveSection: (section: string) => void;
 }
 
-const format12Hour = (time24: string) => {
+const format12Hour = (time24: string, language: string) => {
   if (!time24) return '--:--';
   const [hours, minutes] = time24.split(':');
   const h = parseInt(hours, 10);
-  const ampm = h >= 12 ? 'PM' : 'AM';
+  const ampm = h >= 12 ? (language === 'bn' ? 'পিএম' : 'PM') : (language === 'bn' ? 'এএম' : 'AM');
   const h12 = h % 12 || 12;
-  return `${h12}:${minutes} ${ampm}`;
+  const timeStr = `${h12}:${minutes}`;
+  return language === 'bn' ? `${toBnDigits(timeStr)} ${ampm}` : `${timeStr} ${ampm}`;
 };
 
-export const Hero: React.FC<HeroProps> = ({ prayerData, division, setDivision, district, setDistrict, setActiveSection }) => {
+export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLocationChange, prayerLoading, setActiveSection }) => {
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; countdown: string } | null>(null);
   const { t, language } = useLanguage();
+  const { gregorianDate, hijriDate } = useRealTimeDates(language);
+
+  const [tempDivision, setTempDivision] = useState(division);
+  const [tempDistrict, setTempDistrict] = useState(district);
 
   const divisions = Object.keys(locations);
-  const currentDistricts = locations[division as keyof typeof locations] || [];
+  const currentDistricts = locations[tempDivision as keyof typeof locations] || [];
+
+  const hasChanges = tempDivision !== division || tempDistrict !== district;
+
+  useEffect(() => {
+    setTempDivision(division);
+    setTempDistrict(district);
+  }, [division, district]);
 
   useEffect(() => {
     if (!prayerData) return;
@@ -81,9 +95,9 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, setDivision, d
   }, [prayerData]);
 
   return (
-    <section className="pt-48 pb-24 relative overflow-hidden flex flex-col items-center justify-center text-center min-h-screen">
-      {/* Islamic Banner Background */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#3B2A1A] to-dark-bg overflow-hidden">
+    <section className="pt-48 pb-24 relative overflow-hidden flex flex-col items-center justify-center text-center min-h-screen bg-transparent">
+      {/* Islamic Banner Background Overlay */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent to-dark-bg/50 overflow-hidden">
         {/* Soft Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] opacity-50" />
         
@@ -133,8 +147,8 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, setDivision, d
 
           {/* Main Title */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] tracking-tight">
-            <span className="block text-primary drop-shadow-[0_0_20px_rgba(200,169,81,0.3)]">{t('bangladesh')}</span>
-            <span className="block mt-2">{t('namazSomoysuchi')}</span>
+            <span className="inline-block text-primary drop-shadow-[0_0_20px_rgba(200,169,81,0.3)]">{t('bangladesh')}</span>
+            <span className="inline-block ml-4">{t('namazSomoysuchi')}</span>
           </h1>
 
           {/* Subtitle */}
@@ -179,77 +193,133 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, setDivision, d
         transition={{ duration: 0.8, delay: 0.4 }}
         className="mt-24 w-full max-w-5xl px-4 relative z-10"
       >
-        <div className="bg-black/40 backdrop-blur-xl border border-primary/20 rounded-[40px] p-8 md:p-12 grid md:grid-cols-3 gap-8 items-center shadow-[0_8px_30px_rgb(200,169,81,0.15)]">
-          <div className="text-left">
-            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-2">{t('nextPrayer')}</p>
-            <h2 className="text-4xl font-bold text-white">{nextPrayer ? t(nextPrayer.name.toLowerCase() as any) || nextPrayer.name : '---'}</h2>
+          <div className="grid md:grid-cols-2 gap-8 items-center rounded-[40px]">
+            <div className="text-left space-y-6">
+              <div>
+                <p className="text-primary font-bold tracking-widest uppercase text-xs mb-2">{t('nextPrayer')}</p>
+                <h2 className="text-4xl font-bold text-white">{nextPrayer ? t(nextPrayer.name.toLowerCase() as any) || nextPrayer.name : '---'}</h2>
+              </div>
+              
+              <div className="space-y-3">
+                <p className="text-white/40 text-xs font-bold uppercase tracking-widest">{t('selectDivision')} & {t('selectDistrict')}</p>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="relative w-full">
+                      <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 cursor-pointer hover:bg-white/10 transition-colors">
+                        <MapPin size={16} className="text-primary" />
+                        <select 
+                          value={tempDivision}
+                          onChange={(e) => {
+                            setTempDivision(e.target.value);
+                            setTempDistrict(locations[e.target.value as keyof typeof locations][0]);
+                          }}
+                          className="bg-transparent text-white font-medium appearance-none outline-none cursor-pointer pr-6 w-full"
+                        >
+                          {divisions.map(div => (
+                            <option key={div} value={div} className="bg-dark-card text-white">{div}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} className="text-white/50 absolute right-4 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    <div className="relative w-full">
+                      <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 cursor-pointer hover:bg-white/10 transition-colors">
+                        <MapPin size={16} className="text-primary" />
+                        <select 
+                          value={tempDistrict}
+                          onChange={(e) => setTempDistrict(e.target.value)}
+                          className="bg-transparent text-white font-medium appearance-none outline-none cursor-pointer pr-6 w-full"
+                        >
+                          {currentDistricts.map(dist => (
+                            <option key={dist} value={dist} className="bg-dark-card text-white">{dist}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} className="text-white/50 absolute right-4 pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {hasChanges && (
+                      <motion.button
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        onClick={() => onLocationChange(tempDivision, tempDistrict)}
+                        disabled={prayerLoading}
+                        className="w-full py-4 bg-primary text-secondary rounded-xl font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {prayerLoading ? (
+                          <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <span>📍</span>
+                            {language === 'bn' ? 'লোকেশন সেট করুন' : 'Set Location'}
+                          </>
+                        )}
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Iftar & Sehri Times */}
+              <div className="pt-4 border-t border-white/5">
+                <p className="text-primary font-bold tracking-widest uppercase text-xs mb-4">{t('todayIftarSehri')}</p>
+                <div className="flex gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      🌙
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-[10px] uppercase font-bold tracking-wider">{t('sehri')}</p>
+                      <p className="text-lg font-bold text-white">{prayerData ? format12Hour(prayerData.timings.Fajr, language) : '--:--'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      ☀️
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-[10px] uppercase font-bold tracking-wider">{t('iftar')}</p>
+                      <p className="text-lg font-bold text-white">{prayerData ? format12Hour(prayerData.timings.Maghrib, language) : '--:--'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            <div className="mt-4 flex flex-col sm:flex-row gap-2">
-              <div className="relative inline-block w-full sm:w-auto">
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2 cursor-pointer hover:bg-white/10 transition-colors">
-                  <MapPin size={16} className="text-primary" />
-                  <select 
-                    value={division}
-                    onChange={(e) => {
-                      setDivision(e.target.value);
-                      setDistrict(locations[e.target.value as keyof typeof locations][0]);
-                    }}
-                    className="bg-transparent text-white font-medium appearance-none outline-none cursor-pointer pr-6 w-full"
-                  >
-                    {divisions.map(div => (
-                      <option key={div} value={div} className="bg-dark-card text-white">{div}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={14} className="text-white/50 absolute right-4 pointer-events-none" />
+            <div className="flex flex-col items-center justify-center space-y-8">
+              <div className="text-center">
+                <div className="text-6xl md:text-7xl font-mono font-bold tracking-tighter text-primary drop-shadow-[0_0_20px_rgba(200,169,81,0.5)]">
+                  {language === 'bn' ? toBnDigits(nextPrayer?.countdown || '00:00:00') : (nextPrayer?.countdown || '00:00:00')}
                 </div>
+                <p className="text-white/40 text-xs uppercase mt-2 tracking-widest font-bold">{t('timeRemaining')}</p>
               </div>
 
-              <div className="relative inline-block w-full sm:w-auto">
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2 cursor-pointer hover:bg-white/10 transition-colors">
-                  <MapPin size={16} className="text-primary" />
-                  <select 
-                    value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
-                    className="bg-transparent text-white font-medium appearance-none outline-none cursor-pointer pr-6 w-full"
-                  >
-                    {currentDistricts.map(dist => (
-                      <option key={dist} value={dist} className="bg-dark-card text-white">{dist}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={14} className="text-white/50 absolute right-4 pointer-events-none" />
+              <div className="grid grid-cols-1 gap-4 w-full">
+                <div className="islamic-card p-5 flex flex-col items-center justify-center border-l-4 border-l-primary">
+                  <div className="flex items-center gap-3 text-primary mb-1">
+                    <Calendar size={16} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">{t('englishDate')}</span>
+                  </div>
+                  <p className="text-lg font-bold text-white">
+                    {gregorianDate}
+                  </p>
+                </div>
+                <div className="islamic-card p-5 flex flex-col items-center justify-center border-l-4 border-l-primary">
+                  <div className="flex items-center gap-3 text-primary mb-1">
+                    <Calendar size={16} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">{t('hijriDateLabel')}</span>
+                  </div>
+                  <p className="text-lg font-bold text-white">
+                    {hijriDate.display}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-          
-          <div className="flex flex-col items-center">
-            <div className="text-5xl md:text-6xl font-mono font-bold tracking-tighter text-primary drop-shadow-[0_0_15px_rgba(200,169,81,0.5)]">
-              {nextPrayer?.countdown || '00:00:00'}
-            </div>
-            <p className="text-white/40 text-xs uppercase mt-2 tracking-widest">{t('timeRemaining')}</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:border-primary/30 transition-colors">
-              <p className="text-white/40 text-[10px] uppercase mb-1">{t('englishDate')}</p>
-              <p className="text-sm md:text-base font-bold text-white leading-tight">
-                {prayerData?.date.readable || format(new Date(), 'dd MMM yyyy')}
-              </p>
-            </div>
-            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:border-primary/30 transition-colors">
-              <p className="text-white/40 text-[10px] uppercase mb-1">{t('banglaDate')}</p>
-              <p className="text-sm md:text-base font-bold text-white leading-tight">
-                {new Intl.DateTimeFormat('bn-BD-u-ca-beng', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}
-              </p>
-            </div>
-            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:border-primary/30 transition-colors">
-              <p className="text-white/40 text-[10px] uppercase mb-1">{t('hijriDate')}</p>
-              <p className="text-sm md:text-base font-bold text-white leading-tight">
-                {prayerData?.date.hijri.date || '---'}
-              </p>
-            </div>
-          </div>
-        </div>
       </motion.div>
     </section>
   );

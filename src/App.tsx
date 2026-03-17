@@ -9,6 +9,7 @@ import { Settings } from './components/Settings';
 import { VoiceAssistant } from './components/VoiceAssistant';
 import { ExtraFeatures } from './components/ExtraFeatures';
 import { GlobalAudioPlayer } from './components/GlobalAudioPlayer';
+import { IslamicBackground } from './components/IslamicBackground';
 import { fetchPrayerTimes, fetchPrayerTimesByCity } from './services/prayerService';
 import { PrayerData } from './types';
 import { useTheme } from './hooks/useTheme';
@@ -25,24 +26,33 @@ export default function App() {
   const [prayerData, setPrayerData] = useState<PrayerData | null>(null);
   const [division, setDivision] = useState('Dhaka');
   const [district, setDistrict] = useState('Dhaka');
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [prayerLoading, setPrayerLoading] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.lang = language;
   }, [theme, language]);
 
+  const loadPrayerTimes = async (targetDistrict: string) => {
+    setPrayerLoading(true);
+    const data = await fetchPrayerTimesByCity(targetDistrict, 'Bangladesh');
+    if (data) {
+      setPrayerData(data);
+    }
+    setPrayerLoading(false);
+    setInitialLoading(false);
+  };
+
   useEffect(() => {
-    const getTimes = async () => {
-      setLoading(true);
-      const data = await fetchPrayerTimesByCity(district, 'Bangladesh');
-      if (data) {
-        setPrayerData(data);
-      }
-      setLoading(false);
-    };
-    getTimes();
-  }, [district]);
+    loadPrayerTimes(district);
+  }, []);
+
+  const handleLocationChange = (newDiv: string, newDist: string) => {
+    setDivision(newDiv);
+    setDistrict(newDist);
+    loadPrayerTimes(newDist);
+  };
 
   // Stop audio and scroll to top on section change
   useEffect(() => {
@@ -50,7 +60,7 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [activeSection]);
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-islamic-bg dark:bg-dark-bg transition-colors duration-300">
         <motion.div
@@ -67,6 +77,7 @@ export default function App() {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${theme === 'dark' ? 'bg-dark-bg text-white' : 'bg-islamic-bg text-secondary'}`}>
+      <IslamicBackground />
       <GlobalAudioPlayer />
       <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
       
@@ -82,9 +93,9 @@ export default function App() {
               <Hero 
                 prayerData={prayerData} 
                 division={division} 
-                setDivision={setDivision} 
                 district={district}
-                setDistrict={setDistrict}
+                onLocationChange={handleLocationChange}
+                prayerLoading={prayerLoading}
                 setActiveSection={setActiveSection} 
               />
               <PrayerTimes prayerData={prayerData} />

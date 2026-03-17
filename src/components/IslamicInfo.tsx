@@ -77,7 +77,7 @@ export const IslamicInfo: React.FC = () => {
       color: "bg-primary/10",
       content: [
         { title: t('fastingSawm'), text: t('fastingSawmDesc') },
-        { title: t('suhoor'), text: t('suhoorDesc') },
+        { title: t('sehri'), text: t('sehriDesc') },
         { title: t('iftar'), text: t('iftarDesc') },
         { title: t('taraweeh'), text: t('taraweehDesc') },
         { title: t('laylatulQadr'), text: t('laylatulQadrDesc') }
@@ -145,7 +145,7 @@ export const IslamicInfo: React.FC = () => {
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -10 }}
               onClick={() => setSelectedInfo(card)}
-              className="glass p-10 rounded-[40px] border border-primary/10 hover:border-primary/40 transition-all group cursor-pointer relative overflow-hidden"
+              className="islamic-card p-10 rounded-[40px] group cursor-pointer relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[80px] -z-10 group-hover:bg-primary/10 transition-colors" />
               
@@ -170,7 +170,7 @@ export const IslamicInfo: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="mt-24 glass p-12 md:p-16 rounded-[50px] border border-primary/20 relative overflow-hidden group"
+          className="mt-24 islamic-card p-12 md:p-16 rounded-[50px] relative overflow-hidden group"
         >
           <div className="absolute top-0 right-0 p-12 opacity-[0.07] group-hover:opacity-10 transition-opacity">
             <Moon size={200} className="text-primary rotate-12" />
