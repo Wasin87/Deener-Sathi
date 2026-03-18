@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, useDragControls } from 'motion/react';
-import { X, Play, Pause, SkipBack, SkipForward, Volume2, Mic } from 'lucide-react';
+import { X, Play, Pause, SkipBack, SkipForward, Mic } from 'lucide-react';
 import { useAudio } from '../contexts/AudioContext';
 import { useLanguage } from '../hooks/useLanguage';
 
@@ -25,8 +25,22 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className={`fixed z-50 top-20 right-4 md:right-6 bg-white dark:bg-dark-card shadow-xl rounded-2xl border border-primary/10 overflow-hidden w-full max-w-[200px] md:w-64 ${isCompact ? 'md:w-36' : ''}`}
+      // Modal styling with responsive behavior
+      className={`
+        fixed z-50 
+        top-20 
+        right-4 md:right-6 
+        bg-white dark:bg-dark-card 
+        shadow-xl rounded-2xl border border-primary/10 overflow-hidden 
+        w-full max-w-[200px] 
+        md:w-64 
+        ${isCompact ? 'md:w-36' : ''} 
+        // Mobile-specific adjustments: smaller width and shifted left
+        left-2 sm:left-auto sm:right-4
+        sm:max-w-[180px] 
+      `}
     >
+      {/* Header with draggable area */}
       <div 
         className="p-2 cursor-grab active:cursor-grabbing bg-primary/5 flex justify-between items-center"
         onPointerDown={(e) => controls.start(e)}
@@ -39,6 +53,7 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
         </button>
       </div>
 
+      {/* Controls Section */}
       <div className="p-4 flex flex-col items-center gap-3">
         <div className="flex items-center gap-3">
           <button onClick={playPrevious} className="hidden md:block text-secondary dark:text-white hover:text-primary transition-colors">
@@ -52,6 +67,7 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
+        {/* Mode and Compact/Expand Buttons */}
         <div className="flex items-center gap-2 w-full justify-center">
           <button 
             onClick={() => setMode(mode === 'surah' ? 'single' : 'surah')}
