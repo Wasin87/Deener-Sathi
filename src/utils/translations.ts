@@ -274,6 +274,7 @@ export const translations = {
     performPrayerOnTime: "Perform Prayer On Time",
     prayerIsBetterThanSleep: "الصلاة خير من النوم",
     prayerIsBetterThanSleepSub: "Prayer is Better Than Sleep",
+    islamicTeaching: "Islamic Teaching",
   },
   bn: {
     home: "হোম",
@@ -550,5 +551,6 @@ export const translations = {
     performPrayerOnTime: "সময়মতো নামাজ আদায় করুন",
     prayerIsBetterThanSleep: "الصلاة خير من النوم",
     prayerIsBetterThanSleepSub: "নামাজ ঘুমের চেয়েও উত্তম",
+    islamicTeaching: "ইসলামিক শিক্ষা",
   }
 };

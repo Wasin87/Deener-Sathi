@@ -62,7 +62,7 @@ export const QuranSection: React.FC = () => {
     setLoading(false);
   };
 
-  const playRecitation = (surahNumber: number) => {
+  const playRecitation = async (surahNumber: number) => {
     const surah = surahs.find(s => s.number === surahNumber);
     if (!surah || !surahData) return;
     
@@ -76,11 +76,15 @@ export const QuranSection: React.FC = () => {
     }));
 
     if (playlist.length > 0) {
-      playTrack(playlist[0], playlist);
+      try {
+        await playTrack(playlist[0], playlist);
+      } catch (error) {
+        console.error("Failed to play Quran recitation:", error);
+      }
     }
   };
 
-  const playAyatAudio = (globalAyahNumber: number, index: number) => {
+  const playAyatAudio = async (globalAyahNumber: number, index: number) => {
     if (!surahData) return;
     
     const surah = surahs.find(s => s.number === selectedSurah);
@@ -93,10 +97,14 @@ export const QuranSection: React.FC = () => {
       index: i
     }));
 
-    playTrack(playlist[index], playlist);
+    try {
+      await playTrack(playlist[index], playlist);
+    } catch (error) {
+      console.error("Failed to play Ayah audio:", error);
+    }
   };
 
-  const playParaRecitation = () => {
+  const playParaRecitation = async () => {
     if (!surahData || !selectedPara) return;
     
     const playlist = surahData.details.map((ayah, index) => ({
@@ -109,7 +117,11 @@ export const QuranSection: React.FC = () => {
     }));
 
     if (playlist.length > 0) {
-      playTrack(playlist[0], playlist);
+      try {
+        await playTrack(playlist[0], playlist);
+      } catch (error) {
+        console.error("Failed to play Para recitation:", error);
+      }
     }
   };
 

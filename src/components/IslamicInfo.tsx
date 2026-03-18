@@ -194,7 +194,7 @@ export const IslamicInfo: React.FC = () => {
               </div>
               <div>
                 <p className="text-secondary dark:text-white font-bold text-lg">— {t('wisdomSource')}</p>
-                <p className="text-primary/60 text-sm font-medium uppercase tracking-wider">Islamic Teaching</p>
+                <p className="text-primary/60 text-sm font-medium uppercase tracking-wider">{t('islamicTeaching')}</p>
               </div>
             </div>
           </div>

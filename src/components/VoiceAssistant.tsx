@@ -136,11 +136,11 @@ export const VoiceAssistant: React.FC = () => {
             setIsOpen(true);
           }
         }}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-[0_10px_40px_rgba(200,169,81,0.4)] flex items-center justify-center z-40 group overflow-hidden"
+        className="fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-[0_10px_40px_rgba(200,169,81,0.4)] flex items-center justify-center z-40 group overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute inset-0 rounded-full bg-primary animate-ping opacity-20 group-hover:hidden" />
-        <Mic size={28} className="relative z-10" />
+        <Mic size={20} className="relative z-10" />
       </motion.button>
 
       {/* Assistant Modal */}
@@ -150,7 +150,7 @@ export const VoiceAssistant: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
-            className="fixed bottom-28 right-8 w-[420px] max-w-[90vw] h-[650px] glass rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.3)] z-50 flex flex-col overflow-hidden border border-primary/20"
+            className="fixed bottom-20 right-6 w-[420px] max-w-[90vw] h-[650px] glass rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.3)] z-50 flex flex-col overflow-hidden border border-primary/20"
           >
             {/* Header */}
             <div className="p-8 border-b border-primary/10 flex justify-between items-center bg-primary/5 relative">

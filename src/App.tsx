@@ -7,6 +7,7 @@ import { DuaSection } from './components/DuaSection';
 import { IslamicInfo } from './components/IslamicInfo';
 import { Settings } from './components/Settings';
 import { VoiceAssistant } from './components/VoiceAssistant';
+import { ScrollToTop } from './components/ScrollToTop';
 import { ExtraFeatures } from './components/ExtraFeatures';
 import { GlobalAudioPlayer } from './components/GlobalAudioPlayer';
 import { IslamicBackground } from './components/IslamicBackground';
@@ -210,6 +211,7 @@ export default function App() {
       </footer>
 
       <VoiceAssistant />
+      <ScrollToTop />
     </div>
   );
 }

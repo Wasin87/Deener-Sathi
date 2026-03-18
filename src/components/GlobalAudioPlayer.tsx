@@ -55,7 +55,13 @@ export const GlobalAudioPlayer: React.FC = () => {
                 <SkipBack size={20} />
               </button>
               <button 
-                onClick={togglePlayPause}
+                onClick={async () => {
+                  try {
+                    await togglePlayPause();
+                  } catch (error) {
+                    console.error("Failed to toggle play/pause:", error);
+                  }
+                }}
                 className="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-primary/20"
               >
                 {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} className="ml-1" fill="currentColor" />}

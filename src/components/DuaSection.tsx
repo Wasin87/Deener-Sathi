@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Play, Pause, BookOpen, Sun, Moon, Coffee, Plane, Copy, Check, ChevronRight } from 'lucide-react';
+import { Search, BookOpen, Sun, Moon, Coffee, Plane, Copy, Check, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 
 interface Dua {
@@ -11,6 +11,7 @@ interface Dua {
   bangla: string;
   meaning: string;
   source?: string;
+  audio_url?: string;
 }
 
 export const DuaSection: React.FC = () => {
@@ -18,11 +19,9 @@ export const DuaSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<number | null>(null);
-  const [playingId, setPlayingId] = useState<number | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  const duas: Dua[] = [
+  const duas: Dua[] = React.useMemo(() => [
     {
       id: 1,
       category: "Morning",
@@ -75,7 +74,8 @@ export const DuaSection: React.FC = () => {
       arabic: "اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ",
       bangla: language === 'bn' ? "আল্লাহু লা ইলাহা ইল্লা হুয়াল হাইয়্যুল কাইয়্যুম। লা তা'খুযুহু সিনাতু ওয়ালা নাউম। লাহু মা ফিস সামাওয়াতি ওয়ামা ফিল আরদ। মান যাল্লাযি ইয়াশফাউ ইনদাহু ইল্লা বিইযনিহ। ইয়া'লামু মা বাইনা আইদিহিম ওয়ামা খালফাহুম। ওয়ালা ইউহিতুনা বিশাইইম মিন ইলমিহি ইল্লা বিমা শা-আ। ওয়াসিআ কুরসিইয়ুহুস সামাওয়াতি ওয়াল আরদ। ওয়ালা ইয়াউদুহু হিফযুহুমা ওয়াহুয়াল আলিইয়ুল আযীম।" : "Allahu la ilaha illa Huwal-Hayyul-Qayyum. La ta'khudhuhu sinatun wa la nawm. Lahu ma fis-samawati wa ma fil-ard. Man dhal-ladhi yashfa'u 'indahu illa bi-idhnih. Ya'lamu ma bayna aydihim wa ma khalfahum. Wa la yuhituna bi-shay'im-min 'ilmihi illa bi-ma sha'a. Wasi'a kursiyyuhus-samawati wal-ard. Wa la ya'uduhu hifdhuhuma wa Huwal-'Aliyyul-'Adheem.",
       meaning: t('duaAyatulKursiMeaning'),
-      source: language === 'bn' ? "(সূরা আল-বাকারাহ ২৫৫)" : "(Surah Al-Baqarah 255)"
+      source: language === 'bn' ? "(সূরা আল-বাকারাহ ২৫৫)" : "(Surah Al-Baqarah 255)",
+      audio_url: "https://everyayah.com/data/Alafasy_128kbps/002255.mp3"
     },
     {
       id: 7,
@@ -225,7 +225,7 @@ export const DuaSection: React.FC = () => {
       id: 23,
       category: "Daily",
       title: t('duaPatience'),
-      arabic: "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَتَوَفَّনَا مُসْلِمِينَ",
+      arabic: "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَتَوَفَّনَا مُسْلِمِينَ",
       bangla: language === 'bn' ? "রাব্বানা আফরিগ আলাইনা সাবরাঁ ওয়া তাওয়াফফানা মুসলিমিন।" : "Rabbana afrigh 'alayna sabran wa tawaffana Muslimin.",
       meaning: t('duaPatienceMeaning'),
       source: language === 'bn' ? "(সূরা আল-আরাফ ১২৬)" : "(Surah Al-A'raf 126)"
@@ -275,7 +275,7 @@ export const DuaSection: React.FC = () => {
       meaning: t('duaMorningEveningMeaning'),
       source: language === 'bn' ? "(আবু দাউদ ৫০৮৮)" : "(Abu Dawud 5088)"
     }
-  ];
+  ], [t, language]);
 
   const categories = [
     { name: 'All', label: t('all'), icon: <BookOpen size={18} /> },
@@ -291,41 +291,12 @@ export const DuaSection: React.FC = () => {
      dua.bangla.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleCopy = (dua: Dua) => {
+  const handleCopy = useCallback((dua: Dua) => {
     const text = `${dua.title}\n\n${dua.arabic}\n\n${dua.bangla}\n\n${dua.meaning}`;
     navigator.clipboard.writeText(text);
     setCopiedId(dua.id);
     setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const handleListen = (e: React.MouseEvent, dua: Dua) => {
-    e.stopPropagation();
-    if (playingId === dua.id) {
-      if (isPaused) {
-        window.speechSynthesis.resume();
-        setIsPaused(false);
-      } else {
-        window.speechSynthesis.pause();
-        setIsPaused(true);
-      }
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(dua.arabic);
-    utterance.lang = 'ar-SA';
-    utterance.onend = () => {
-      setPlayingId(null);
-      setIsPaused(false);
-    };
-    window.speechSynthesis.speak(utterance);
-    setPlayingId(dua.id);
-    setIsPaused(false);
-  };
-
-  const isCurrentlyPlaying = (id: number) => {
-    return playingId === id && !isPaused;
-  };
+  }, []);
 
   const toggleExpand = (id: number) => {
     setExpandedId(expandedId === id ? null : id);
@@ -397,16 +368,6 @@ export const DuaSection: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <button 
-                      onClick={(e) => handleListen(e, dua)}
-                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                        playingId === dua.id 
-                          ? 'bg-primary text-secondary' 
-                          : 'bg-white/5 text-primary hover:bg-primary/20'
-                      }`}
-                    >
-                      {isCurrentlyPlaying(dua.id) ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
-                    </button>
                     <motion.div
                       animate={{ rotate: expandedId === dua.id ? 180 : 0 }}
                       className="text-white/40 group-hover:text-primary transition-colors"
