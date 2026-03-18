@@ -28,16 +28,13 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
       // Modal styling with responsive behavior
       className={`
         fixed z-50 
-        top-20 
-        right-4 md:right-6 
+        left-4 
+        top-1/2 -translate-y-1/2
         bg-white dark:bg-dark-card 
         shadow-xl rounded-2xl border border-primary/10 overflow-hidden 
-        w-full max-w-[200px] 
+        w-full max-w-[180px] 
         md:w-64 
         ${isCompact ? 'md:w-36' : ''} 
-        // Mobile-specific adjustments: smaller width and shifted left
-        left-2 sm:left-auto sm:right-4
-        sm:max-w-[180px] 
       `}
     >
       {/* Header with draggable area */}
