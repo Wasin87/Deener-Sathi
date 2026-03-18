@@ -46,7 +46,13 @@ export const VoiceAssistant: React.FC = () => {
     
     const voiceLang = localStorage.getItem('voiceLanguage') || language;
     // Correct language codes
-    utterance.lang = voiceLang === 'bn' ? 'bn-BD' : 'en-US';
+    if (voiceLang === 'bn') {
+      utterance.lang = 'bn-BD';
+    } else if (voiceLang === 'ar') {
+      utterance.lang = 'ar-SA';
+    } else {
+      utterance.lang = 'en-US';
+    }
     
     const voices = window.speechSynthesis.getVoices();
     let preferredVoice;
@@ -54,6 +60,9 @@ export const VoiceAssistant: React.FC = () => {
     if (voiceLang === 'bn') {
       // Find a Bangla voice
       preferredVoice = voices.find(v => v.lang.startsWith('bn'));
+    } else if (voiceLang === 'ar') {
+      // Find an Arabic voice
+      preferredVoice = voices.find(v => v.lang.startsWith('ar'));
     } else {
       // Find a natural English voice
       preferredVoice = voices.find(v => (v.name.includes('Google') || v.name.includes('Natural')) && v.lang.startsWith('en'));

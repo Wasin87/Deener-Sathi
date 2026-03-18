@@ -38,10 +38,10 @@ export const ScrollToTop: React.FC = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
-          className="fixed bottom-20 right-6 z-[90] p-3 bg-primary text-secondary rounded-full shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all border border-primary/20 backdrop-blur-sm"
+          className="fixed bottom-24 right-6 z-[90] p-4 bg-primary text-secondary rounded-full shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all border border-primary/20 backdrop-blur-sm flex items-center justify-center"
           aria-label="Scroll to top"
         >
-          <ChevronUp size={20} />
+          <ChevronUp size={24} />
         </motion.button>
       )}
     </AnimatePresence>

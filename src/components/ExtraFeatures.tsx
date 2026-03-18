@@ -4,14 +4,14 @@ import { Quote, Calendar, Timer } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import { PrayerData } from '../types';
 
-import { useRealTimeDates, hijriMonthKeys, toBnDigits } from '../hooks/useRealTimeDates';
+import { useRealTimeDates, hijriMonthKeys } from '../hooks/useRealTimeDates';
 
 interface ExtraFeaturesProps {
   prayerData: PrayerData | null;
 }
 
 export const ExtraFeatures: React.FC<ExtraFeaturesProps> = ({ prayerData }) => {
-  const { t, language } = useLanguage();
+  const { t, language, n } = useLanguage();
   const { gregorianDate, hijriDate } = useRealTimeDates(language);
   
   const hadith = {
@@ -73,14 +73,14 @@ export const ExtraFeatures: React.FC<ExtraFeaturesProps> = ({ prayerData }) => {
               <h3 className="text-xl font-bold">{isRamadan ? t('ramadanDay') : t('ramadanCountdown')}</h3>
             </div>
             <div className="text-center py-4">
-              <span className="text-7xl font-bold">{language === 'bn' ? toBnDigits((isRamadan ? ramadanDay : (daysToRamadan > 0 ? daysToRamadan : 0)).toString()) : (isRamadan ? ramadanDay : (daysToRamadan > 0 ? daysToRamadan : 0))}</span>
+              <span className="text-7xl font-bold">{n(isRamadan ? ramadanDay : (daysToRamadan > 0 ? daysToRamadan : 0))}</span>
               <p className="text-secondary/80 font-bold uppercase tracking-widest mt-2">
                 {isRamadan ? t('ramadanDay') : t('daysRemaining')}
               </p>
             </div>
             {isRamadan ? (
               <p className="text-sm text-secondary/90 text-center mt-4 font-bold bg-white/20 py-3 rounded-xl">
-                {language === 'bn' ? toBnDigits(remainingRamadanDays.toString()) : remainingRamadanDays} {t('ramadanRemaining')} <br/>
+                {n(remainingRamadanDays)} {t('ramadanRemaining')} <br/>
                 <span className="text-xs opacity-80 uppercase tracking-tighter">{t('eidCountdown')}</span>
               </p>
             ) : (
@@ -104,7 +104,7 @@ export const ExtraFeatures: React.FC<ExtraFeaturesProps> = ({ prayerData }) => {
               <div className="flex justify-between items-center pb-4 border-b border-white/5">
                 <span className="text-white/40 text-xs font-bold uppercase tracking-wider">{language === 'bn' ? 'মাস' : 'Month'}</span>
                 <span className="font-bold text-white">
-                  {hijriDate.data ? `${t(hijriMonthKeys[hijriDate.data.month.number] as any)} ${language === 'bn' ? toBnDigits(hijriDate.data.year) : hijriDate.data.year}` : '---'}
+                  {hijriDate.data ? `${t(hijriMonthKeys[hijriDate.data.month.number] as any)} ${n(hijriDate.data.year)}` : '---'}
                 </span>
               </div>
               <div className="flex justify-between items-center pb-4 border-b border-white/5">

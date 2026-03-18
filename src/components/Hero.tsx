@@ -7,7 +7,7 @@ import { useLanguage } from '../hooks/useLanguage';
 import { locationTranslations } from '../utils/locationTranslations';
 import { locations } from '../utils/locations';
 
-import { useRealTimeDates, toBnDigits } from '../hooks/useRealTimeDates';
+import { useRealTimeDates } from '../hooks/useRealTimeDates';
 
 interface HeroProps {
   prayerData: PrayerData | null;
@@ -18,19 +18,19 @@ interface HeroProps {
   setActiveSection: (section: string) => void;
 }
 
-const format12Hour = (time24: string, language: string) => {
+const format12Hour = (time24: string, n: (val: string | number) => string, language: string) => {
   if (!time24) return '--:--';
   const [hours, minutes] = time24.split(':');
   const h = parseInt(hours, 10);
   const ampm = h >= 12 ? (language === 'bn' ? 'পিএম' : 'PM') : (language === 'bn' ? 'এএম' : 'AM');
   const h12 = h % 12 || 12;
   const timeStr = `${h12}:${minutes}`;
-  return language === 'bn' ? `${toBnDigits(timeStr)} ${ampm}` : `${timeStr} ${ampm}`;
+  return `${n(timeStr)} ${ampm}`;
 };
 
 export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLocationChange, prayerLoading, setActiveSection }) => {
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; countdown: string } | null>(null);
-  const { t, language } = useLanguage();
+  const { t, n, language } = useLanguage();
   const { gregorianDate, hijriDate } = useRealTimeDates(language);
 
   const [tempDivision, setTempDivision] = useState(division);
@@ -260,7 +260,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
                         ) : (
                           <>
                             <span>📍</span>
-                            {language === 'bn' ? 'লোকেশন সেট করুন' : 'Set Location'}
+                            {t('setLocation')}
                           </>
                         )}
                       </motion.button>
@@ -279,7 +279,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
                     </div>
                     <div>
                       <p className="text-white/40 text-[10px] uppercase font-bold tracking-wider">{t('sehri')}</p>
-                      <p className="text-lg font-bold text-white">{prayerData ? format12Hour(prayerData.timings.Fajr, language) : '--:--'}</p>
+                      <p className="text-lg font-bold text-white">{prayerData ? format12Hour(prayerData.timings.Fajr, n, language) : '--:--'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -288,7 +288,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
                     </div>
                     <div>
                       <p className="text-white/40 text-[10px] uppercase font-bold tracking-wider">{t('iftar')}</p>
-                      <p className="text-lg font-bold text-white">{prayerData ? format12Hour(prayerData.timings.Maghrib, language) : '--:--'}</p>
+                      <p className="text-lg font-bold text-white">{prayerData ? format12Hour(prayerData.timings.Maghrib, n, language) : '--:--'}</p>
                     </div>
                   </div>
                 </div>
@@ -298,7 +298,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
             <div className="flex flex-col items-center justify-center space-y-8">
               <div className="text-center">
                 <div className="text-6xl md:text-7xl font-mono font-bold tracking-tighter text-primary drop-shadow-[0_0_20px_rgba(200,169,81,0.5)]">
-                  {language === 'bn' ? toBnDigits(nextPrayer?.countdown || '00:00:00') : (nextPrayer?.countdown || '00:00:00')}
+                  {n(nextPrayer?.countdown || '00:00:00')}
                 </div>
                 <p className="text-white/40 text-xs uppercase mt-2 tracking-widest font-bold">{t('timeRemaining')}</p>
               </div>

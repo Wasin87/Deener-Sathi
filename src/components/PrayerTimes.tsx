@@ -3,24 +3,24 @@ import { motion } from 'motion/react';
 import { Clock, Bell, Info } from 'lucide-react';
 import { PrayerData } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
-import { useRealTimeDates, toBnDigits } from '../hooks/useRealTimeDates';
+import { useRealTimeDates } from '../hooks/useRealTimeDates';
 
 interface PrayerTimesProps {
   prayerData: PrayerData | null;
 }
 
-const format12Hour = (time24: string, language: string) => {
+const format12Hour = (time24: string, n: (val: string | number) => string, language: string) => {
   if (!time24) return '--:--';
   const [hours, minutes] = time24.split(':');
   const h = parseInt(hours, 10);
   const ampm = h >= 12 ? (language === 'bn' ? 'পিএম' : 'PM') : (language === 'bn' ? 'এএম' : 'AM');
   const h12 = h % 12 || 12;
   const timeStr = `${h12}:${minutes}`;
-  return language === 'bn' ? `${toBnDigits(timeStr)} ${ampm}` : `${timeStr} ${ampm}`;
+  return `${n(timeStr)} ${ampm}`;
 };
 
 export const PrayerTimes: React.FC<PrayerTimesProps> = ({ prayerData }) => {
-  const { t, language } = useLanguage();
+  const { t, n, language } = useLanguage();
   if (!prayerData) return null;
 
   const prayers = [
@@ -36,14 +36,14 @@ export const PrayerTimes: React.FC<PrayerTimesProps> = ({ prayerData }) => {
     const [h, m] = azan.split(':').map(Number);
     const date = new Date();
     date.setHours(h, m + 15);
-    return format12Hour(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`, language);
+    return format12Hour(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`, n, language);
   };
 
   const getLastTime = (name: string, azan: string) => {
     const [h, m] = azan.split(':').map(Number);
-    if (name === 'Fajr') return format12Hour(prayerData.timings.Sunrise, language);
-    if (name === 'Maghrib') return format12Hour(prayerData.timings.Isha, language);
-    return format12Hour(`${(h + 2) % 24}:${m.toString().padStart(2, '0')}`, language);
+    if (name === 'Fajr') return format12Hour(prayerData.timings.Sunrise, n, language);
+    if (name === 'Maghrib') return format12Hour(prayerData.timings.Isha, n, language);
+    return format12Hour(`${(h + 2) % 24}:${m.toString().padStart(2, '0')}`, n, language);
   };
 
   return (
@@ -73,7 +73,7 @@ export const PrayerTimes: React.FC<PrayerTimesProps> = ({ prayerData }) => {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white">{t(prayer.name.toLowerCase() as any) || prayer.name}</h3>
-                    <p className="text-sm text-primary font-medium">{t('azanTime')}: {format12Hour(prayer.time, language)}</p>
+                    <p className="text-sm text-primary font-medium">{t('azanTime')}: {format12Hour(prayer.time, n, language)}</p>
                   </div>
                 </div>
                 <button className="p-3 rounded-xl bg-white/5 text-white/40 hover:bg-primary hover:text-white transition-all">

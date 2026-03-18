@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Play, Pause, Book, ChevronRight, Volume2, Mic, ChevronLeft } from 'lucide-react';
 import { fetchSurahs, fetchSurahDetail, fetchSurahTranslation, fetchParaDetail, fetchParaTranslation } from '../services/quranService';
@@ -10,8 +10,9 @@ import { surahTranslations } from '../utils/surahTranslations';
 
 export const QuranSection: React.FC = () => {
   const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
-  const { t, language } = useLanguage();
-  const { playTrack, currentTrack, isPlaying, togglePlayPause } = useAudio();
+  const { t, n, language } = useLanguage();
+  const translationEdition = language === 'bn' ? 'bn.bengali' : 'en.sahih';
+  const { playTrack, currentTrack, isPlaying, togglePlayPause, stopAudio } = useAudio();
   const [view, setView] = useState<'grid' | 'surah' | 'para'>('grid');
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [selectedSurah, setSelectedSurah] = useState<number | null>(null);
@@ -29,13 +30,14 @@ export const QuranSection: React.FC = () => {
     loadSurahs();
   }, []);
 
-  const handleSurahClick = async (number: number) => {
+  const handleSurahClick = useCallback(async (number: number) => {
     setLoading(true);
     setSelectedSurah(number);
+    setSelectedPara(null);
     setView('surah');
     const [details, translation] = await Promise.all([
       fetchSurahDetail(number),
-      fetchSurahTranslation(number)
+      fetchSurahTranslation(number, translationEdition)
     ]);
     
     if (details && translation) {
@@ -45,15 +47,16 @@ export const QuranSection: React.FC = () => {
       });
     }
     setLoading(false);
-  };
+  }, [translationEdition]);
 
-  const handleParaClick = async (number: number) => {
+  const handleParaClick = useCallback(async (number: number) => {
     setLoading(true);
     setSelectedPara(number);
+    setSelectedSurah(null);
     setView('para');
     const [details, translation] = await Promise.all([
       fetchParaDetail(number),
-      fetchParaTranslation(number)
+      fetchParaTranslation(number, translationEdition)
     ]);
     
     if (details && translation) {
@@ -63,7 +66,15 @@ export const QuranSection: React.FC = () => {
       });
     }
     setLoading(false);
-  };
+  }, [translationEdition]);
+
+  useEffect(() => {
+    if (view === 'surah' && selectedSurah) {
+      handleSurahClick(selectedSurah);
+    } else if (view === 'para' && selectedPara) {
+      handleParaClick(selectedPara);
+    }
+  }, [language, handleSurahClick, handleParaClick]);
 
   const playRecitation = async (surahNumber: number) => {
     const surah = surahs.find(s => s.number === surahNumber);
@@ -81,6 +92,7 @@ export const QuranSection: React.FC = () => {
     if (playlist.length > 0) {
       try {
         await playTrack(playlist[0], playlist, 'surah');
+        setIsAudioModalOpen(true);
       } catch (error) {
         console.error("Failed to play Quran recitation:", error);
       }
@@ -102,6 +114,7 @@ export const QuranSection: React.FC = () => {
 
     try {
       await playTrack(playlist[index], playlist, 'single');
+      // Do not open AudioModal here
     } catch (error) {
       console.error("Failed to play Ayah audio:", error);
     }
@@ -122,6 +135,7 @@ export const QuranSection: React.FC = () => {
     if (playlist.length > 0) {
       try {
         await playTrack(playlist[0], playlist, 'surah');
+        setIsAudioModalOpen(true);
       } catch (error) {
         console.error("Failed to play Para recitation:", error);
       }
@@ -272,9 +286,11 @@ export const QuranSection: React.FC = () => {
                     className="islamic-card p-6 group text-center"
                   >
                     <div className="w-12 h-12 bg-primary/10 group-hover:bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                      <span className="font-bold text-primary group-hover:text-white">{i + 1}</span>
+                      <span className="font-bold text-primary group-hover:text-white">
+                        {n(i + 1)}
+                      </span>
                     </div>
-                    <h4 className="font-bold">{t('para')} {i + 1}</h4>
+                    <h4 className="font-bold">{t('para')} {n(i + 1)}</h4>
                   </button>
                 ))}
               </div>
@@ -294,13 +310,15 @@ export const QuranSection: React.FC = () => {
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center font-bold text-lg">
-                        {surah.number}
+                        {n(surah.number)}
                       </div>
                       <div className="text-left">
                         <h4 className="font-bold text-secondary dark:text-white">
                           {surahTranslations[surah.englishName]?.[language] || surah.englishName}
                         </h4>
-                        <p className="text-xs text-secondary/50 dark:text-primary/50">{surah.numberOfAyahs} {t('ayat')}</p>
+                        <p className="text-xs text-secondary/50 dark:text-primary/50">
+                          {n(surah.numberOfAyahs)} {t('ayat')}
+                        </p>
                       </div>
                     </div>
                     <span className="text-2xl font-arabic text-primary">{surah.name}</span>
@@ -324,10 +342,10 @@ export const QuranSection: React.FC = () => {
               <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 border-b border-primary/10 pb-8">
                 <div className="text-center md:text-left">
                   <h3 className="text-4xl font-bold text-secondary dark:text-white mb-2">
-                    {view === 'surah' ? (surahTranslations[surahs.find(s => s.number === selectedSurah)?.englishName || '']?.[language] || surahs.find(s => s.number === selectedSurah)?.englishName) : `${t('para')} ${selectedPara}`}
+                    {view === 'surah' ? (surahTranslations[surahs.find(s => s.number === selectedSurah)?.englishName || '']?.[language] || surahs.find(s => s.number === selectedSurah)?.englishName) : `${t('para')} ${n(selectedPara || 0)}`}
                   </h3>
                   <p className="text-primary font-medium text-2xl font-arabic">
-                    {view === 'surah' ? surahs.find(s => s.number === selectedSurah)?.name : 'الجزء ' + selectedPara}
+                    {view === 'surah' ? surahs.find(s => s.number === selectedSurah)?.name : 'الجزء ' + n(selectedPara || 0)}
                   </p>
                 </div>
                 <div className="flex gap-4 items-center">
@@ -375,7 +393,7 @@ export const QuranSection: React.FC = () => {
                         <div className="flex justify-between items-start gap-6">
                           <div className="flex flex-col gap-3">
                             <span className="w-14 h-14 rounded-2xl bg-primary/10 text-primary text-xl flex items-center justify-center shrink-0 font-bold border border-primary/20 shadow-inner">
-                              {ayah.numberInSurah}
+                              {n(ayah.numberInSurah)}
                             </span>
                             <button 
                               onClick={() => playAyatAudio(ayah.number, idx)}
@@ -422,7 +440,10 @@ export const QuranSection: React.FC = () => {
             </div>
           </motion.div>
         )}
-        <AudioModal isOpen={isAudioModalOpen} onClose={() => setIsAudioModalOpen(false)} />
+        <AudioModal isOpen={isAudioModalOpen} onClose={() => {
+          setIsAudioModalOpen(false);
+          stopAudio();
+        }} />
       </div>
     </section>
   );

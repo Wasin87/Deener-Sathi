@@ -28,14 +28,8 @@ export const hijriMonthKeys: { [key: number]: string } = {
   12: 'dhuAlHijjah',
 };
 
-export const bnDigits: { [key: string]: string } = {
-  '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
-};
-
-export const toBnDigits = (str: string) => str.replace(/\d/g, d => bnDigits[d]);
-
 export const useRealTimeDates = (language: 'en' | 'bn') => {
-  const { t } = useLanguage();
+  const { t, n } = useLanguage();
   const [gregorianDate, setGregorianDate] = useState('');
   const [banglaDate, setBanglaDate] = useState({ full: '', month: '', day: '', year: '' });
   const [hijriDate, setHijriDate] = useState<{ display: string; data: HijriData | null }>({
@@ -86,7 +80,7 @@ export const useRealTimeDates = (language: 'en' | 'bn') => {
         
         let display = '';
         if (language === 'bn') {
-          display = `${toBnDigits(h.day)} ${monthName} ${toBnDigits(h.year)} হিজরি`;
+          display = `${n(h.day)} ${monthName} ${n(h.year)} হিজরি`;
         } else {
           display = `${h.day} ${monthName} ${h.year} ${h.designation.abbreviated}`;
         }

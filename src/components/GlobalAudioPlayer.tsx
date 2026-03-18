@@ -8,7 +8,7 @@ export const GlobalAudioPlayer: React.FC = () => {
   const { isPlaying, currentTrack, progress, duration, togglePlayPause, stopAudio, seek, playNext, playPrevious, mode, setMode } = useAudio();
   const { t } = useLanguage();
 
-  if (!currentTrack) return null;
+  if (!currentTrack || currentTrack.type === 'quran') return null;
 
   const formatTime = (seconds: number) => {
     if (isNaN(seconds)) return "0:00";
