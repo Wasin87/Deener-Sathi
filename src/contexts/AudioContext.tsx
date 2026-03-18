@@ -15,7 +15,9 @@ interface AudioContextType {
   playlist: Track[];
   progress: number;
   duration: number;
-  playTrack: (track: Track, list?: Track[]) => Promise<boolean>;
+  mode: 'surah' | 'single';
+  setMode: (mode: 'surah' | 'single') => void;
+  playTrack: (track: Track, list?: Track[], mode?: 'surah' | 'single') => Promise<boolean>;
   togglePlayPause: () => Promise<void>;
   stopAudio: () => void;
   seek: (time: number) => void;
@@ -31,6 +33,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [playlist, setPlaylist] = useState<Track[]>([]);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [mode, setMode] = useState<'surah' | 'single'>('surah');
   
   const audioRef = useRef<HTMLAudioElement>(new Audio());
   
@@ -91,9 +94,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  const playTrack = useCallback(async (track: Track, list: Track[] = []): Promise<boolean> => {
+  const playTrack = useCallback(async (track: Track, list: Track[] = [], mode: 'surah' | 'single' = 'surah'): Promise<boolean> => {
     if (!audioRef.current) return false;
     
+    setMode(mode);
+
     if (list.length > 0) {
       setPlaylist(list);
     }
@@ -157,15 +162,17 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const playNext = useCallback(() => {
+    if (mode === 'single') return; // Do not auto-next in single mode
+
     const currentPlaylist = playlistRef.current;
     const track = currentTrackRef.current;
     if (currentPlaylist.length > 0 && track) {
       const currentIndex = currentPlaylist.findIndex(t => t.url === track.url);
       if (currentIndex !== -1 && currentIndex < currentPlaylist.length - 1) {
-        playTrack(currentPlaylist[currentIndex + 1], currentPlaylist);
+        playTrack(currentPlaylist[currentIndex + 1], currentPlaylist, 'surah');
       }
     }
-  }, [playTrack]);
+  }, [playTrack, mode]);
 
   const playPrevious = useCallback(() => {
     const currentPlaylist = playlistRef.current;
@@ -173,10 +180,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (currentPlaylist.length > 0 && track) {
       const currentIndex = currentPlaylist.findIndex(t => t.url === track.url);
       if (currentIndex !== -1 && currentIndex > 0) {
-        playTrack(currentPlaylist[currentIndex - 1], currentPlaylist);
+        playTrack(currentPlaylist[currentIndex - 1], currentPlaylist, mode);
       }
     }
-  }, [playTrack]);
+  }, [playTrack, mode]);
 
   // Sync refs with state
   useEffect(() => {
@@ -201,6 +208,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handleEnded = () => {
       setIsPlaying(false);
       setProgress(0);
+      
+      if (mode === 'single') return; // Do not auto-next in single mode
+
       // Auto play next if in playlist
       const currentPlaylist = playlistRef.current;
       const track = currentTrackRef.current;
@@ -208,7 +218,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (currentPlaylist.length > 0 && track) {
         const currentIndex = currentPlaylist.findIndex(t => t.url === track.url);
         if (currentIndex !== -1 && currentIndex < currentPlaylist.length - 1) {
-          playTrack(currentPlaylist[currentIndex + 1], currentPlaylist);
+          playTrack(currentPlaylist[currentIndex + 1], currentPlaylist, 'surah');
         }
       }
     };
@@ -279,7 +289,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('error', handleError);
     };
-  }, [playTrack, safePlay]);
+  }, [playTrack, safePlay, mode]);
 
 
   useEffect(() => {
@@ -297,6 +307,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       playlist,
       progress, 
       duration, 
+      mode,
+      setMode,
       playTrack, 
       togglePlayPause, 
       stopAudio, 

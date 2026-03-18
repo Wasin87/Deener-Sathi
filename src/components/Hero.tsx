@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { format, differenceInSeconds, parse, addDays, isBefore } from 'date-fns';
 import { PrayerData } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
+import { locationTranslations } from '../utils/locationTranslations';
 import { locations } from '../utils/locations';
 
 import { useRealTimeDates, toBnDigits } from '../hooks/useRealTimeDates';
@@ -216,7 +217,9 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
                           className="bg-transparent text-white font-medium appearance-none outline-none cursor-pointer pr-6 w-full"
                         >
                           {divisions.map(div => (
-                            <option key={div} value={div} className="bg-dark-card text-white">{div}</option>
+                            <option key={div} value={div} className="bg-dark-card text-white">
+                              {locationTranslations[div]?.[language] || div}
+                            </option>
                           ))}
                         </select>
                         <ChevronDown size={14} className="text-white/50 absolute right-4 pointer-events-none" />
@@ -232,7 +235,9 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
                           className="bg-transparent text-white font-medium appearance-none outline-none cursor-pointer pr-6 w-full"
                         >
                           {currentDistricts.map(dist => (
-                            <option key={dist} value={dist} className="bg-dark-card text-white">{dist}</option>
+                            <option key={dist} value={dist} className="bg-dark-card text-white">
+                              {locationTranslations[dist]?.[language] || dist}
+                            </option>
                           ))}
                         </select>
                         <ChevronDown size={14} className="text-white/50 absolute right-4 pointer-events-none" />

@@ -198,7 +198,7 @@ export default function App() {
             <div>
               <h4 className="font-bold mb-6 text-primary">{t('contact')}</h4>
               <ul className="space-y-3 text-secondary/60 dark:text-white/60">
-                <li>Email: info@deenersathi.com</li>
+                <li>Email: wasinahmed87@gmail.com</li>
                 <li>Support: help@deenersathi.com</li>
                 <li>Dhaka</li>
               </ul>

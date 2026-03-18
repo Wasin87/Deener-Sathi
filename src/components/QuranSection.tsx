@@ -5,9 +5,12 @@ import { fetchSurahs, fetchSurahDetail, fetchSurahTranslation, fetchParaDetail, 
 import { Surah, Ayah } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
 import { useAudio } from '../contexts/AudioContext';
+import { AudioModal } from './AudioModal';
+import { surahTranslations } from '../utils/surahTranslations';
 
 export const QuranSection: React.FC = () => {
-  const { t } = useLanguage();
+  const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
+  const { t, language } = useLanguage();
   const { playTrack, currentTrack, isPlaying, togglePlayPause } = useAudio();
   const [view, setView] = useState<'grid' | 'surah' | 'para'>('grid');
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -77,7 +80,7 @@ export const QuranSection: React.FC = () => {
 
     if (playlist.length > 0) {
       try {
-        await playTrack(playlist[0], playlist);
+        await playTrack(playlist[0], playlist, 'surah');
       } catch (error) {
         console.error("Failed to play Quran recitation:", error);
       }
@@ -98,7 +101,7 @@ export const QuranSection: React.FC = () => {
     }));
 
     try {
-      await playTrack(playlist[index], playlist);
+      await playTrack(playlist[index], playlist, 'single');
     } catch (error) {
       console.error("Failed to play Ayah audio:", error);
     }
@@ -118,7 +121,7 @@ export const QuranSection: React.FC = () => {
 
     if (playlist.length > 0) {
       try {
-        await playTrack(playlist[0], playlist);
+        await playTrack(playlist[0], playlist, 'surah');
       } catch (error) {
         console.error("Failed to play Para recitation:", error);
       }
@@ -294,7 +297,9 @@ export const QuranSection: React.FC = () => {
                         {surah.number}
                       </div>
                       <div className="text-left">
-                        <h4 className="font-bold text-secondary dark:text-white">{surah.englishName}</h4>
+                        <h4 className="font-bold text-secondary dark:text-white">
+                          {surahTranslations[surah.englishName]?.[language] || surah.englishName}
+                        </h4>
                         <p className="text-xs text-secondary/50 dark:text-primary/50">{surah.numberOfAyahs} {t('ayat')}</p>
                       </div>
                     </div>
@@ -319,7 +324,7 @@ export const QuranSection: React.FC = () => {
               <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 border-b border-primary/10 pb-8">
                 <div className="text-center md:text-left">
                   <h3 className="text-4xl font-bold text-secondary dark:text-white mb-2">
-                    {view === 'surah' ? surahs.find(s => s.number === selectedSurah)?.englishName : `${t('para')} ${selectedPara}`}
+                    {view === 'surah' ? (surahTranslations[surahs.find(s => s.number === selectedSurah)?.englishName || '']?.[language] || surahs.find(s => s.number === selectedSurah)?.englishName) : `${t('para')} ${selectedPara}`}
                   </h3>
                   <p className="text-primary font-medium text-2xl font-arabic">
                     {view === 'surah' ? surahs.find(s => s.number === selectedSurah)?.name : 'الجزء ' + selectedPara}
@@ -417,6 +422,7 @@ export const QuranSection: React.FC = () => {
             </div>
           </motion.div>
         )}
+        <AudioModal isOpen={isAudioModalOpen} onClose={() => setIsAudioModalOpen(false)} />
       </div>
     </section>
   );
