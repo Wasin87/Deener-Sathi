@@ -25,10 +25,10 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className={`fixed z-50 top-20 left-6 right-6 md:left-auto md:right-6 bg-white dark:bg-dark-card shadow-xl rounded-2xl border border-primary/10 overflow-hidden w-full max-w-[240px] md:w-64 ${isCompact ? 'md:w-36' : ''}`}
+      className={`fixed z-50 top-20 right-4 md:right-6 bg-white dark:bg-dark-card shadow-xl rounded-2xl border border-primary/10 overflow-hidden w-full max-w-[200px] md:w-64 ${isCompact ? 'md:w-36' : ''}`}
     >
       <div 
-        className="p-3 cursor-grab active:cursor-grabbing bg-primary/5 flex justify-between items-center"
+        className="p-2 cursor-grab active:cursor-grabbing bg-primary/5 flex justify-between items-center"
         onPointerDown={(e) => controls.start(e)}
       >
         <h3 className="font-bold text-secondary dark:text-white flex items-center gap-1.5 text-sm">
@@ -41,13 +41,13 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
 
       <div className="p-4 flex flex-col items-center gap-3">
         <div className="flex items-center gap-3">
-          <button onClick={playPrevious} className="text-secondary dark:text-white hover:text-primary transition-colors">
+          <button onClick={playPrevious} className="hidden md:block text-secondary dark:text-white hover:text-primary transition-colors">
             <SkipBack size={20} />
           </button>
-          <button onClick={togglePlay} className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-colors">
-            {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+          <button onClick={togglePlay} className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-colors">
+            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
           </button>
-          <button onClick={playNext} className="text-secondary dark:text-white hover:text-primary transition-colors">
+          <button onClick={playNext} className="hidden md:block text-secondary dark:text-white hover:text-primary transition-colors">
             <SkipForward size={20} />
           </button>
         </div>
