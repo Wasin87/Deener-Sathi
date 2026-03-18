@@ -25,7 +25,7 @@ export const AudioModal: React.FC<AudioModalProps> = ({ isOpen, onClose }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className={`fixed z-50 top-20 left-4 right-4 md:left-auto md:right-4 bg-white dark:bg-dark-card shadow-xl rounded-2xl border border-primary/10 overflow-hidden w-full max-w-[280px] md:w-72 ${isCompact ? 'md:w-40' : ''}`}
+      className={`fixed z-50 top-20 left-6 right-6 md:left-auto md:right-6 bg-white dark:bg-dark-card shadow-xl rounded-2xl border border-primary/10 overflow-hidden w-full max-w-[240px] md:w-64 ${isCompact ? 'md:w-36' : ''}`}
     >
       <div 
         className="p-3 cursor-grab active:cursor-grabbing bg-primary/5 flex justify-between items-center"
