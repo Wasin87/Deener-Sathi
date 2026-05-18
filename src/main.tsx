@@ -4,12 +4,15 @@ import App from './App.tsx';
 import './index.css';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AudioProvider } from './contexts/AudioContext';
+import { AssistantProvider } from './contexts/AssistantContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LanguageProvider>
       <AudioProvider>
-        <App />
+        <AssistantProvider>
+          <App />
+        </AssistantProvider>
       </AudioProvider>
     </LanguageProvider>
   </StrictMode>,

@@ -19,16 +19,25 @@ export const QuranSection: React.FC = () => {
   const [selectedPara, setSelectedPara] = useState<number | null>(null);
   const [surahData, setSurahData] = useState<{ details: Ayah[]; translation: Ayah[] } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
 
+  const loadSurahs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const res = await fetchSurahs();
+    if (res) {
+      setSurahs(res.data);
+    } else {
+      setError(t('failedToLoad'));
+    }
+    setLoading(false);
+  }, [t]);
+
   useEffect(() => {
-    const loadSurahs = async () => {
-      const res = await fetchSurahs();
-      if (res) setSurahs(res.data);
-    };
     loadSurahs();
-  }, []);
+  }, [loadSurahs]);
 
   const handleSurahClick = useCallback(async (number: number) => {
     setLoading(true);
@@ -45,12 +54,16 @@ export const QuranSection: React.FC = () => {
         details: details.data.ayahs,
         translation: translation.data.ayahs
       });
+    } else {
+      setError(t('failedToLoad'));
+      setView('grid');
     }
     setLoading(false);
-  }, [translationEdition]);
+  }, [translationEdition, t]);
 
   const handleParaClick = useCallback(async (number: number) => {
     setLoading(true);
+    setError(null);
     setSelectedPara(number);
     setSelectedSurah(null);
     setView('para');
@@ -64,9 +77,12 @@ export const QuranSection: React.FC = () => {
         details: details.data.ayahs,
         translation: translation.data.ayahs
       });
+    } else {
+      setError(t('failedToLoad'));
+      setView('grid');
     }
     setLoading(false);
-  }, [translationEdition]);
+  }, [translationEdition, t]);
 
   useEffect(() => {
     if (view === 'surah' && selectedSurah) {
@@ -272,6 +288,18 @@ export const QuranSection: React.FC = () => {
                 </button>
               </div>
             </div>
+
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 text-center mb-12 max-w-2xl mx-auto">
+                <p className="text-red-500 font-bold mb-4">{error}</p>
+                <button 
+                  onClick={loadSurahs}
+                  className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors"
+                >
+                  {t('retry')}
+                </button>
+              </div>
+            )}
 
             {/* 30 Para Grid */}
             <div className="mb-16">

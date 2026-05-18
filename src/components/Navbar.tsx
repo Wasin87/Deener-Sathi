@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, setActiveSection 
               <span className="text-xs">🌐</span> {language.toUpperCase()}
             </button>
             <button 
-              className="lg:hidden p-2 rounded-lg bg-primary/10 text-primary"
+              className="lg:hidden p-2 rounded-lg bg-primary/10 text-primary hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}

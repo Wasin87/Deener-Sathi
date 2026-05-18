@@ -11,6 +11,8 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { ExtraFeatures } from './components/ExtraFeatures';
 import { GlobalAudioPlayer } from './components/GlobalAudioPlayer';
 import { IslamicBackground } from './components/IslamicBackground';
+import { MobileNavbar } from './components/MobileNavbar';
+import { InstallPWA } from './components/InstallPWA';
 import { fetchPrayerTimes, fetchPrayerTimesByCity } from './services/prayerService';
 import { PrayerData } from './types';
 import { useTheme } from './hooks/useTheme';
@@ -82,7 +84,7 @@ export default function App() {
       <GlobalAudioPlayer />
       <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
       
-      <main className="flex-grow">
+      <main className="flex-grow pb-32 lg:pb-0">
         <AnimatePresence mode="wait">
           {activeSection === 'home' && (
             <motion.div
@@ -212,6 +214,8 @@ export default function App() {
 
       <VoiceAssistant />
       <ScrollToTop />
+      <MobileNavbar activeSection={activeSection} setActiveSection={setActiveSection} />
+      <InstallPWA />
     </div>
   );
 }

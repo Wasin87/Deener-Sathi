@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Mic, Send, X, Bot, User, Volume2, VolumeX, Sparkles, MessageSquare } from 'lucide-react';
 import { getIslamicAssistantResponse } from '../services/geminiService';
 import { useLanguage } from '../hooks/useLanguage';
+import { useAssistant } from '../contexts/AssistantContext';
 
 export const VoiceAssistant: React.FC = () => {
   const { t, language } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isAssistantOpen: isOpen, closeAssistant, toggleAssistant } = useAssistant();
   const [isListening, setIsListening] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [input, setInput] = useState('');
@@ -139,13 +140,13 @@ export const VoiceAssistant: React.FC = () => {
         whileTap={{ scale: 0.9 }}
         onClick={() => {
           if (isOpen) {
-            setIsOpen(false);
+            closeAssistant();
             stopAll();
           } else {
-            setIsOpen(true);
+            toggleAssistant();
           }
         }}
-        className="fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-[0_10px_40px_rgba(200,169,81,0.4)] flex items-center justify-center z-40 group overflow-hidden"
+        className="hidden lg:flex fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-[0_10px_40px_rgba(218,182,91,0.4)] flex items-center justify-center z-40 group overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute inset-0 rounded-full bg-primary animate-ping opacity-20 group-hover:hidden" />
@@ -185,7 +186,7 @@ export const VoiceAssistant: React.FC = () => {
                 </button>
                 <button 
                   onClick={() => {
-                    setIsOpen(false);
+                    closeAssistant();
                     stopAll();
                   }}
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-secondary/50 dark:text-white/50 hover:text-primary hover:bg-primary/10 transition-all"

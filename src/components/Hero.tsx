@@ -103,7 +103,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] opacity-50" />
         
         {/* Crescent Moon */}
-        <div className="absolute top-20 right-[20%] w-32 h-32 rounded-full shadow-[inset_20px_-10px_0_0_rgba(200,169,81,0.8)] opacity-80 rotate-[-20deg] blur-[1px]" />
+        <div className="absolute top-20 right-[20%] w-32 h-32 rounded-full shadow-[inset_20px_-10px_0_0_rgba(218,182,91,0.8)] opacity-80 rotate-[-20deg] blur-[1px]" />
         
         {/* Stars */}
         {[...Array(20)].map((_, i) => (
@@ -125,10 +125,10 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
         {/* Mosque Silhouette */}
         <div className="absolute bottom-0 left-0 w-full h-64 opacity-20 pointer-events-none flex items-end justify-center overflow-hidden">
           <svg viewBox="0 0 1200 300" className="w-full h-full object-cover object-bottom min-w-[1200px]" preserveAspectRatio="none">
-            <path d="M0,300 L1200,300 L1200,250 C1180,250 1170,230 1170,200 C1170,170 1150,150 1130,150 C1110,150 1090,170 1090,200 C1090,230 1080,250 1060,250 L1000,250 C980,250 970,230 970,200 C970,150 950,100 900,100 C850,100 830,150 830,200 C830,230 820,250 800,250 L750,250 C730,250 720,230 720,200 C720,170 700,150 680,150 C660,150 640,170 640,200 C640,230 630,250 610,250 L550,250 C530,250 520,230 520,200 C520,120 480,50 400,50 C320,50 280,120 280,200 C280,230 270,250 250,250 L200,250 C180,250 170,230 170,200 C170,170 150,150 130,150 C110,150 90,170 90,200 C90,230 80,250 60,250 L0,250 Z" fill="#C8A951" />
-            <path d="M400,20 L400,50 M900,70 L900,100 M1130,120 L1130,150 M680,120 L680,150 M130,120 L130,150" stroke="#C8A951" strokeWidth="4" />
-            <circle cx="400" cy="15" r="5" fill="#C8A951" />
-            <circle cx="900" cy="65" r="5" fill="#C8A951" />
+            <path d="M0,300 L1200,300 L1200,250 C1180,250 1170,230 1170,200 C1170,170 1150,150 1130,150 C1110,150 1090,170 1090,200 C1090,230 1080,250 1060,250 L1000,250 C980,250 970,230 970,200 C970,150 950,100 900,100 C850,100 830,150 830,200 C830,230 820,250 800,250 L750,250 C730,250 720,230 720,200 C720,170 700,150 680,150 C660,150 640,170 640,200 C640,230 630,250 610,250 L550,250 C530,250 520,230 520,200 C520,120 480,50 400,50 C320,50 280,120 280,200 C280,230 270,250 250,250 L200,250 C180,250 170,230 170,200 C170,170 150,150 130,150 C110,150 90,170 90,200 C90,230 80,250 60,250 L0,250 Z" fill="#DAB65B" />
+            <path d="M400,20 L400,50 M900,70 L900,100 M1130,120 L1130,150 M680,120 L680,150 M130,120 L130,150" stroke="#DAB65B" strokeWidth="4" />
+            <circle cx="400" cy="15" r="5" fill="#DAB65B" />
+            <circle cx="900" cy="65" r="5" fill="#DAB65B" />
           </svg>
         </div>
       </div>
@@ -141,14 +141,14 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
           className="max-w-4xl mx-auto"
         >
           {/* Live Badge */}
-          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(200,169,81,0.2)]">
-            <span className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_rgba(200,169,81,0.8)]" />
+          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(218,182,91,0.2)]">
+            <span className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_rgba(218,182,91,0.8)]" />
             {t('liveNamazTime')}
           </div>
 
           {/* Main Title */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] tracking-tight">
-            <span className="inline-block text-primary drop-shadow-[0_0_20px_rgba(200,169,81,0.3)]">{t('bangladesh')}</span>
+            <span className="inline-block text-primary drop-shadow-[0_0_20px_rgba(218,182,91,0.3)]">{t('bangladesh')}</span>
             <span className="inline-block ml-4">{t('namazSomoysuchi')}</span>
           </h1>
 
@@ -159,7 +159,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
 
           {/* Arabic Calligraphy & Sub-text */}
           <div className="mb-16 space-y-6">
-            <p className="text-5xl md:text-7xl font-arabic text-primary opacity-90 drop-shadow-[0_0_25px_rgba(200,169,81,0.4)] leading-relaxed">
+            <p className="text-5xl md:text-7xl font-arabic text-primary opacity-90 drop-shadow-[0_0_25px_rgba(218,182,91,0.4)] leading-relaxed">
               {t('prayerIsBetterThanSleep')}
             </p>
             <p className={`text-xl md:text-2xl text-white/80 font-medium italic tracking-wide ${language === 'bn' ? 'font-bangla' : 'font-sans'}`}>
@@ -297,7 +297,7 @@ export const Hero: React.FC<HeroProps> = ({ prayerData, division, district, onLo
             
             <div className="flex flex-col items-center justify-center space-y-8">
               <div className="text-center">
-                <div className="text-6xl md:text-7xl font-mono font-bold tracking-tighter text-primary drop-shadow-[0_0_20px_rgba(200,169,81,0.5)]">
+                <div className="text-6xl md:text-7xl font-mono font-bold tracking-tighter text-primary drop-shadow-[0_0_20px_rgba(218,182,91,0.5)]">
                   {n(nextPrayer?.countdown || '00:00:00')}
                 </div>
                 <p className="text-white/40 text-xs uppercase mt-2 tracking-widest font-bold">{t('timeRemaining')}</p>
